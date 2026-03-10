@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Space Mono", monospace;
+  --font-code: "JetBrains Mono", monospace;
+
+  --color-nexus-indigo: #6366f1;
+  --color-nexus-cyan: #00d9f5;
+  --color-nexus-violet: #a78bfa;
+  --color-nexus-navy: #050a0f;
+}
+
+@layer base {
+  body {
+    @apply font-sans transition-colors duration-300;
+  }
+}
+
+.glass {
+  @apply bg-white/10 backdrop-blur-md border border-white/20;
+}
+
+.dark .glass {
+  @apply bg-black/40 backdrop-blur-md border border-white/10;
+}
+
+.neon-border {
+  @apply border border-nexus-indigo/50 shadow-[0_0_15px_rgba(99,102,241,0.3)];
+}
+
+.matrix-canvas {
+  @apply absolute inset-0 pointer-events-none opacity-20;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-nexus-navy;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-nexus-indigo rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-nexus-violet;
+}
