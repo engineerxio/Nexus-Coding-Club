@@ -6,7 +6,8 @@ import {
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword, 
   signInWithPopup,
-  updateProfile 
+  updateProfile,
+  sendPasswordResetEmail 
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { auth, googleProvider, facebookProvider, db } from '../lib/firebase';
@@ -158,6 +159,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!formData.email) {
+      alert('Please enter your email address in the email field first.');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, formData.email);
+      alert('Password reset email sent! Please check your inbox (and spam folder).');
+    } catch (error: any) {
+      alert(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -255,6 +272,18 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
                   onChange={e => setFormData({ ...formData, password: e.target.value })}
                 />
               </div>
+
+              {isLogin && (
+                <div className="flex justify-end -mt-2">
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    className="text-xs text-nexus-indigo hover:text-nexus-cyan transition-colors font-medium"
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
+              )}
 
               <button
                 type="submit"

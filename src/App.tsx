@@ -183,39 +183,33 @@ export default function App() {
       </AnimatePresence>
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center overflow-hidden">
+      <section className="relative min-h-screen flex items-center overflow-hidden pt-20 lg:pt-0">
         <MatrixRain color={isDark ? '#6366f1' : '#818cf8'} />
         
-        {/* Top Middle Badge */}
-        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-20">
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-nexus-indigo/30"
-          >
-            <span className="w-2 h-2 rounded-full bg-nexus-indigo animate-pulse" />
-            <span className="text-xs font-mono font-bold tracking-widest text-nexus-indigo uppercase">✦ Est. 2026 · Programming Enthusiasts</span>
-          </motion.div>
-        </div>
-        
-        <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center z-10">
+        <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center z-10 py-12 lg:py-0">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-center lg:text-left"
           >
-            <h1 className="text-5xl md:text-7xl font-bold leading-tight mb-6">
+            {/* Badge moved inside flow for better mobile layout */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-nexus-indigo/30 mb-8 mx-auto lg:mx-0">
+              <span className="w-2 h-2 rounded-full bg-nexus-indigo animate-pulse" />
+              <span className="text-[10px] sm:text-xs font-mono font-bold tracking-widest text-nexus-indigo uppercase">✦ Est. 2026 · Programming Enthusiasts</span>
+            </div>
+            
+            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold leading-tight mb-6">
               Where Humans <br />
               <span className="text-nexus-indigo">Meet Machines</span> <br />
               to Build Tomorrow.
             </h1>
             
-            <p className="text-lg text-white/60 dark:text-white/60 mb-10 max-w-lg">
-              Join the elite community of developers, designers, and tech enthusiasts in Bangladesh. We push the boundaries of what's possible.
+            <p className="text-base sm:text-lg text-white/60 dark:text-white/60 mb-10 max-w-lg mx-auto lg:mx-0">
+              Join the leading community of developers, designers, and tech enthusiasts in Bangladesh. We push the boundaries of what's possible.
             </p>
             
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap justify-center lg:justify-start gap-4">
               <button 
                 onClick={() => setIsAuthModalOpen(true)}
                 className="px-8 py-4 rounded-xl bg-gradient-to-r from-nexus-indigo to-nexus-violet text-white font-bold hover:shadow-[0_0_30px_rgba(99,102,241,0.5)] transition-all transform hover:-translate-y-1 flex items-center gap-2 group"
@@ -469,26 +463,57 @@ export default function App() {
             </div>
 
             <div className="glass p-10 rounded-3xl border-white/5">
-              <form className="space-y-6">
+              <form 
+                className="space-y-6"
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const form = e.currentTarget;
+                  const formData = new FormData(form);
+                  const data = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    subject: formData.get('subject'),
+                    message: formData.get('message')
+                  };
+
+                  try {
+                    const response = await fetch('/api/contact', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(data)
+                    });
+
+                    if (response.ok) {
+                      alert('Message sent successfully! We will get back to you soon.');
+                      form.reset();
+                    } else {
+                      alert('Failed to send message. Please try again later.');
+                    }
+                  } catch (error) {
+                    console.error('Error sending message:', error);
+                    alert('An error occurred. Please try again later.');
+                  }
+                }}
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-xs text-white/40 uppercase tracking-widest font-bold">Full Name</label>
-                    <input type="text" className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-nexus-indigo transition-colors" />
+                    <input name="name" type="text" required className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-nexus-indigo transition-colors" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs text-white/40 uppercase tracking-widest font-bold">Email Address</label>
-                    <input type="email" className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-nexus-indigo transition-colors" />
+                    <input name="email" type="email" required className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-nexus-indigo transition-colors" />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs text-white/40 uppercase tracking-widest font-bold">Subject</label>
-                  <input type="text" className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-nexus-indigo transition-colors" />
+                  <input name="subject" type="text" required className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-nexus-indigo transition-colors" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs text-white/40 uppercase tracking-widest font-bold">Message</label>
-                  <textarea rows={4} className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-nexus-indigo transition-colors resize-none" />
+                  <textarea name="message" rows={4} required className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-nexus-indigo transition-colors resize-none" />
                 </div>
-                <button className="w-full py-4 rounded-xl bg-nexus-indigo text-white font-bold flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all">
+                <button type="submit" className="w-full py-4 rounded-xl bg-nexus-indigo text-white font-bold flex items-center justify-center gap-2 hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all">
                   Send Message <Send size={18} />
                 </button>
               </form>
