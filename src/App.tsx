@@ -23,6 +23,7 @@ import { Terminal } from './components/Terminal';
 import { Navbar, Drawer } from './components/Navigation';
 import { AuthModal } from './components/AuthModal';
 import { Dashboard } from './components/Dashboard';
+import { HeroSkeleton } from './components/Skeleton';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { User } from './types';
 import { auth, db } from './lib/firebase';
@@ -57,6 +58,7 @@ export default function App() {
   const [currentUser, setCurrentUser] = useLocalStorage<User | null>('nexus_current_user', null);
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [registeredMembers, setRegisteredMembers] = useState<User[]>([]);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -116,6 +118,8 @@ export default function App() {
         setRegisteredMembers(members);
       } catch (error) {
         console.error("Error fetching members:", error);
+      } finally {
+        setIsInitialLoading(false);
       }
     };
     fetchMembers();
@@ -186,54 +190,58 @@ export default function App() {
       <section className="relative min-h-screen flex items-center overflow-hidden pt-20 lg:pt-0">
         <MatrixRain color={isDark ? '#6366f1' : '#818cf8'} />
         
-        <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center z-10 py-12 lg:py-0">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-center lg:text-left"
-          >
-            {/* Badge moved inside flow for better mobile layout */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-nexus-indigo/30 mb-8 mx-auto lg:mx-0">
-              <span className="w-2 h-2 rounded-full bg-nexus-indigo animate-pulse" />
-              <span className="text-[10px] sm:text-xs font-mono font-bold tracking-widest text-nexus-indigo uppercase">✦ Est. 2026 · Programming Enthusiasts</span>
-            </div>
-            
-            <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold leading-tight mb-6">
-              Where Humans <br />
-              <span className="text-nexus-indigo">Meet Machines</span> <br />
-              to Build Tomorrow.
-            </h1>
-            
-            <p className="text-base sm:text-lg text-white/60 dark:text-white/60 mb-10 max-w-lg mx-auto lg:mx-0">
-              Join the leading community of developers, designers, and tech enthusiasts in Bangladesh. We push the boundaries of what's possible.
-            </p>
-            
-            <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-              <button 
-                onClick={() => setIsAuthModalOpen(true)}
-                className="px-8 py-4 rounded-xl bg-gradient-to-r from-nexus-indigo to-nexus-violet text-white font-bold hover:shadow-[0_0_30px_rgba(99,102,241,0.5)] transition-all transform hover:-translate-y-1 flex items-center gap-2 group"
-              >
-                Join the Club <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-              </button>
-              <a 
-                href="#about"
-                className="px-8 py-4 rounded-xl glass border-white/10 text-white font-bold hover:bg-white/5 transition-all transform hover:-translate-y-1"
-              >
-                Explore More
-              </a>
-            </div>
-          </motion.div>
+        {isInitialLoading ? (
+          <HeroSkeleton />
+        ) : (
+          <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center z-10 py-12 lg:py-0">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-center lg:text-left"
+            >
+              {/* Badge moved inside flow for better mobile layout */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border-nexus-indigo/30 mb-8 mx-auto lg:mx-0">
+                <span className="w-2 h-2 rounded-full bg-nexus-indigo animate-pulse" />
+                <span className="text-[10px] sm:text-xs font-mono font-bold tracking-widest text-nexus-indigo uppercase">✦ Est. 2026 · Programming Enthusiasts</span>
+              </div>
+              
+              <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold leading-tight mb-6">
+                Where Humans <br />
+                <span className="text-nexus-indigo">Meet Machines</span> <br />
+                to Build Tomorrow.
+              </h1>
+              
+              <p className="text-base sm:text-lg text-white/60 dark:text-white/60 mb-10 max-w-lg mx-auto lg:mx-0">
+                Join the leading community of developers, designers, and tech enthusiasts in Bangladesh. We push the boundaries of what's possible.
+              </p>
+              
+              <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                <button 
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className="px-8 py-4 rounded-xl bg-gradient-to-r from-nexus-indigo to-nexus-violet text-white font-bold hover:shadow-[0_0_30px_rgba(99,102,241,0.5)] transition-all transform hover:-translate-y-1 flex items-center gap-2 group"
+                >
+                  Join the Club <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+                <a 
+                  href="#about"
+                  className="px-8 py-4 rounded-xl glass border-white/10 text-white font-bold hover:bg-white/5 transition-all transform hover:-translate-y-1"
+                >
+                  Explore More
+                </a>
+              </div>
+            </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="hidden lg:block"
-          >
-            <NeuralOrb />
-          </motion.div>
-        </div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="hidden lg:block"
+            >
+              <NeuralOrb />
+            </motion.div>
+          </div>
+        )}
 
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
           <span className="text-[10px] font-mono uppercase tracking-widest">Scroll to explore</span>
@@ -528,7 +536,7 @@ export default function App() {
           <div className="flex flex-col items-center text-center mb-16">
             <div className="w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(99,102,241,0.3)]">
               <img 
-                src="/logo.png" 
+                src="https://lh3.googleusercontent.com/d/17IacH_MVoQrCAld0_V90X6j9DgS5Ntpe" 
                 alt="Nexus Logo" 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
@@ -544,7 +552,7 @@ export default function App() {
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded overflow-hidden flex items-center justify-center">
                 <img 
-                  src="/logo.png" 
+                  src="https://lh3.googleusercontent.com/d/17IacH_MVoQrCAld0_V90X6j9DgS5Ntpe" 
                   alt="Nexus Logo" 
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"

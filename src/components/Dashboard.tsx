@@ -296,7 +296,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout, onClose })
         <div className="flex items-center gap-3 mb-12">
           <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center">
             <img 
-              src="/logo.png" 
+              src="https://lh3.googleusercontent.com/d/17IacH_MVoQrCAld0_V90X6j9DgS5Ntpe" 
               alt="Nexus Logo" 
               className="w-full h-full object-cover"
               onError={(e) => {
@@ -400,7 +400,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout, onClose })
               <div className="flex flex-col items-center text-center">
                 <div className="w-16 h-16 rounded-xl overflow-hidden flex items-center justify-center mb-6">
                   <img 
-                    src="/logo.png" 
+                    src="https://lh3.googleusercontent.com/d/17IacH_MVoQrCAld0_V90X6j9DgS5Ntpe" 
                     alt="Nexus Logo" 
                     className="w-full h-full object-cover"
                     onError={(e) => {

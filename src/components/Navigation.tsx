@@ -41,7 +41,7 @@ export const Navbar: React.FC<NavbarProps> = ({ isDark, toggleTheme, onOpenDrawe
         <a href="/" className="flex items-center gap-3 group cursor-pointer">
             <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] transition-all">
               <img 
-                src="/logo.png" 
+                src="https://lh3.googleusercontent.com/d/17IacH_MVoQrCAld0_V90X6j9DgS5Ntpe" 
                 alt="Nexus Logo" 
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -141,7 +141,7 @@ export const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose, onLoginClick, o
               <a href="/" onClick={onClose} className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center">
                   <img 
-                    src="/logo.png" 
+                    src="https://lh3.googleusercontent.com/d/17IacH_MVoQrCAld0_V90X6j9DgS5Ntpe" 
                     alt="Nexus Logo" 
                     className="w-full h-full object-cover"
                     onError={(e) => {
