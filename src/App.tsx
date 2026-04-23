@@ -171,6 +171,7 @@ export default function App() {
         isLoggedIn={!!currentUser}
         onDashboardClick={() => setIsDashboardOpen(true)}
         isDark={isDark}
+        onOpenAmbassadors={() => setIsAmbassadorsPageOpen(true)}
       />
 
       <AmbassadorsPage 
@@ -339,17 +340,46 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-16">
             <div>
-              <h2 className="text-4xl font-bold mb-4">Upcoming Events</h2>
+              <h2 className="text-4xl font-bold mb-4">Events</h2>
               <p className="text-nexus-navy/60 dark:text-white/60">Stay tuned for our upcoming workshops, contests, and meetups.</p>
             </div>
           </div>
 
-          <div className="glass p-20 rounded-3xl border-white/5 text-center">
-            <div className="w-20 h-20 bg-nexus-indigo/10 rounded-full flex items-center justify-center text-nexus-indigo mx-auto mb-8">
-              <Calendar size={40} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="group relative rounded-2xl overflow-hidden glass border-white/5 shadow-xl"
+            >
+              <div className="aspect-square bg-black/40 overflow-hidden">
+                <img 
+                  src="https://lh3.googleusercontent.com/d/1KoLg7b9gfx1i1OBIONTMqZlyeqD_lqrm" 
+                  alt="Nexus Intellect Clash"
+                  className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-nexus-navy via-nexus-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-4 text-left">
+                <div className="bg-nexus-navy/90 backdrop-blur-md p-4 rounded-xl border border-white/10 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                  <h4 className="text-sm font-bold text-white mb-0.5 group-hover:text-nexus-indigo transition-colors uppercase tracking-tight">Nexus Intellect Clash</h4>
+                  <p className="text-nexus-cyan font-medium text-[10px] mb-2 leading-tight">The Olympiad of Complex Thinkers</p>
+                  <div className="flex items-center gap-2 text-white/70 text-[10px] font-mono">
+                    <Calendar size={12} className="text-nexus-indigo" />
+                    <span>24 April - 27 May</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Coming Soon placeholder */}
+            <div className="aspect-square p-6 glass rounded-2xl border-white/5 flex flex-col items-center justify-center text-center opacity-60">
+              <div className="w-12 h-12 bg-nexus-indigo/10 rounded-full flex items-center justify-center text-nexus-indigo mb-4">
+                <Clock size={24} />
+              </div>
+              <h3 className="text-xl font-bold mb-2">More Events Soon</h3>
+              <p className="text-xs text-nexus-navy/40 dark:text-white/40">We are planning more exciting competitions.</p>
             </div>
-            <h3 className="text-3xl font-bold mb-4">Coming Soon</h3>
-            <p className="text-nexus-navy/40 dark:text-white/40 max-w-md mx-auto">We are currently planning some exciting events for our community. Check back soon for updates!</p>
           </div>
         </div>
       </section>
@@ -359,12 +389,32 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-4xl font-bold mb-16 text-center">Captured Moments</h2>
           
-          <div className="glass p-20 rounded-3xl border-white/5 text-center">
-            <div className="w-20 h-20 bg-nexus-indigo/10 rounded-full flex items-center justify-center text-nexus-indigo mx-auto mb-8">
-              <ImageIcon size={40} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="group relative aspect-video rounded-3xl overflow-hidden glass border-white/5"
+            >
+              <img 
+                src="https://lh3.googleusercontent.com/d/1881PfQp7e-64muTwpTKFY9m0Pme5l0Eo" 
+                alt="Nexus Core Team Meeting"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-nexus-navy via-nexus-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6 text-left">
+                <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                  <h4 className="text-lg font-bold text-white mb-2 leading-tight">Strategic Leadership Convergence</h4>
+                  <p className="text-nexus-cyan text-[10px] uppercase tracking-widest font-bold">The Nexus Core Leadership Team defining vision and operational objectives for upcoming flagship initiatives.</p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Placeholder for more moments */}
+            <div className="aspect-video glass rounded-3xl border-white/5 flex flex-col items-center justify-center text-center opacity-40">
+              <ImageIcon size={32} className="text-nexus-indigo mb-4" />
+              <p className="text-xs uppercase tracking-widest font-bold">More Moments Coming Soon</p>
             </div>
-            <h3 className="text-3xl font-bold mb-4">Coming Soon</h3>
-            <p className="text-nexus-navy/40 dark:text-white/40 max-w-md mx-auto">We are capturing the best moments of our club. Stay tuned to see our journey!</p>
           </div>
         </div>
       </section>
@@ -505,7 +555,7 @@ export default function App() {
             </div>
           </div>
 
-          <div>
+          <div id="members">
             <h3 className="text-xl font-bold mb-12 text-center text-nexus-navy/40 dark:text-white/40 uppercase tracking-[0.3em]">Registered Members</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {registeredMembers.length > 0 ? (

@@ -103,21 +103,32 @@ interface DrawerProps {
   isLoggedIn: boolean;
   onDashboardClick: () => void;
   isDark: boolean;
+  onOpenAmbassadors?: () => void;
 }
 
-export const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose, onLoginClick, onRegisterClick, isLoggedIn, onDashboardClick, isDark }) => {
+export const Drawer: React.FC<DrawerProps> = ({ 
+  isOpen, 
+  onClose, 
+  onLoginClick, 
+  onRegisterClick, 
+  isLoggedIn, 
+  onDashboardClick, 
+  isDark,
+  onOpenAmbassadors
+}) => {
   const navLinks = [
     { name: 'About Us', icon: Info, href: '#about' },
     { name: 'Events', icon: Calendar, href: '#events' },
     { name: 'Contests', icon: Trophy, href: '#contests' },
     { name: 'Training', icon: GraduationCap, href: '#training' },
     { name: 'Gallery', icon: ImageIcon, href: '#gallery' },
-    { name: 'Contact', icon: Mail, href: '#contact' },
+    { name: 'Contact', icon: Mail, href: '#connect' },
   ];
 
   const teamLinks = [
     { name: 'Advisors & Mentors', icon: GraduationCap, href: '#team' },
-    { name: 'Executive Members', icon: Users, href: '#team' },
+    { name: 'Campus Ambassadors', icon: Users, isAction: true },
+    { name: 'Executive Members', icon: Users, href: '#members' },
   ];
 
   return (
@@ -186,11 +197,17 @@ export const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose, onLoginClick, o
                 {teamLinks.map((link) => (
                   <a 
                     key={link.name} 
-                    href={link.href} 
-                    onClick={onClose}
+                    href={link.isAction ? '#' : link.href} 
+                    onClick={(e) => {
+                      if (link.isAction && onOpenAmbassadors) {
+                        e.preventDefault();
+                        onOpenAmbassadors();
+                      }
+                      onClose();
+                    }}
                     className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all group ${isDark ? 'text-white/60 hover:text-white hover:bg-white/5' : 'text-nexus-navy/60 hover:text-nexus-navy hover:bg-nexus-navy/5'}`}
                   >
-                    <link.icon size={20} className="group-hover:text-nexus-cyan transition-colors" />
+                    <link.icon size={20} className={link.isAction ? "group-hover:text-nexus-indigo transition-colors" : "group-hover:text-nexus-cyan transition-colors"} />
                     <span className="font-medium">{link.name}</span>
                     <ChevronRight size={14} className="ml-auto opacity-0 group-hover:opacity-100 transition-all" />
                   </a>
