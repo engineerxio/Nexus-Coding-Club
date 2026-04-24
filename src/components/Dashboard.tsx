@@ -16,6 +16,7 @@ import {
   Lock
 } from 'lucide-react';
 import { User, ContestRanking, Certificate } from '../types';
+import { getStableNexusId } from '../lib/idGenerator';
 
 interface DashboardProps {
   user: User;
@@ -43,7 +44,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout, onClose, i
               <p className={isDark ? 'text-white/60' : 'text-nexus-navy/60'}>Here's what's happening in the club today.</p>
             </div>
             <div className={`px-4 py-2 glass rounded-xl border-nexus-indigo/30`}>
-              <span className="text-nexus-cyan font-mono text-sm">ID: {user.id}</span>
+              <span className="text-nexus-cyan font-mono text-sm">NEXUS ID: {user.nexusId || getStableNexusId(user.id)}</span>
             </div>
           </div>
 
@@ -257,7 +258,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, onLogout, onClose, i
                 {user.fullName.charAt(0)}
               </div>
               <h3 className="text-2xl font-bold text-white">{user.fullName}</h3>
-              <p className="text-nexus-cyan font-mono text-sm">{user.id}</p>
+              <p className="text-nexus-cyan font-mono text-sm">{user.nexusId || getStableNexusId(user.id)}</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[

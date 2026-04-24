@@ -9,8 +9,9 @@ import {
   updateProfile,
   sendPasswordResetEmail 
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, getDocs, collection } from 'firebase/firestore';
 import { auth, googleProvider, facebookProvider, db } from '../lib/firebase';
+import { generateNexusId } from '../lib/idGenerator';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -60,8 +61,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
           displayName: formData.fullName
         });
 
+        // Generate unique Nexus ID
+        let nexusId = generateNexusId();
+        const membersSnapshot = await getDocs(collection(db, 'users'));
+        const existingIds = membersSnapshot.docs.map(d => d.data().nexusId);
+        while (existingIds.includes(nexusId)) {
+          nexusId = generateNexusId();
+        }
+
         const newUser: User = {
           id: fbUser.uid,
+          nexusId: nexusId,
           fullName: formData.fullName,
           institute: formData.institute,
           gender: formData.gender,
@@ -74,7 +84,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
           institute: newUser.institute,
           gender: newUser.gender,
           email: newUser.email,
-          joinDate: newUser.joinDate
+          joinDate: newUser.joinDate,
+          nexusId: newUser.nexusId
         });
         
         onRegister(newUser);
@@ -99,18 +110,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
       let userData = userDoc.data();
 
       if (!userData) {
+        // Generate unique Nexus ID
+        let nexusId = generateNexusId();
+        const membersSnapshot = await getDocs(collection(db, 'users'));
+        const existingIds = membersSnapshot.docs.map(d => d.data().nexusId);
+        while (existingIds.includes(nexusId)) {
+          nexusId = generateNexusId();
+        }
+
         userData = {
           fullName: fbUser.displayName || fbUser.email?.split('@')[0] || 'Nexus Member',
           email: fbUser.email || '',
           institute: 'Nexus Member',
           gender: 'Other',
-          joinDate: new Date().toLocaleDateString()
+          joinDate: new Date().toLocaleDateString(),
+          nexusId
         };
         await setDoc(doc(db, 'users', fbUser.uid), userData);
       }
 
       const user: User = {
         id: fbUser.uid,
+        nexusId: userData.nexusId,
         fullName: userData.fullName,
         email: userData.email,
         institute: userData.institute,
@@ -136,18 +157,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
       let userData = userDoc.data();
 
       if (!userData) {
+        // Generate unique Nexus ID
+        let nexusId = generateNexusId();
+        const membersSnapshot = await getDocs(collection(db, 'users'));
+        const existingIds = membersSnapshot.docs.map(d => d.data().nexusId);
+        while (existingIds.includes(nexusId)) {
+          nexusId = generateNexusId();
+        }
+
         userData = {
           fullName: fbUser.displayName || fbUser.email?.split('@')[0] || 'Nexus Member',
           email: fbUser.email || '',
           institute: 'Nexus Member',
           gender: 'Other',
-          joinDate: new Date().toLocaleDateString()
+          joinDate: new Date().toLocaleDateString(),
+          nexusId
         };
         await setDoc(doc(db, 'users', fbUser.uid), userData);
       }
 
       const user: User = {
         id: fbUser.uid,
+        nexusId: userData.nexusId,
         fullName: userData.fullName,
         email: userData.email,
         institute: userData.institute,

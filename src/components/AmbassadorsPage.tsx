@@ -4,6 +4,7 @@ import { ArrowLeft, X } from 'lucide-react';
 
 interface Ambassador {
   name: string;
+  nexusId: string;
   institute: string;
   bio: string;
   image: string;
@@ -19,6 +20,7 @@ interface AmbassadorsPageProps {
 const allAmbassadors: Ambassador[] = [
   {
     name: "Ishrat Jahan Rupsha",
+    nexusId: "NXS-A4R2",
     institute: "BGC Trust University",
     bio: "Passionate about tech and community building. Representing Nexus at BGC Trust University.",
     email: "rupsha619@gmail.com",
@@ -26,6 +28,7 @@ const allAmbassadors: Ambassador[] = [
   },
   {
     name: "MD. Mahadi Hasan Fahim",
+    nexusId: "NXS-K9L5",
     institute: "International Islamic University Chittagong",
     bio: "Competitive programmer and tech enthusiast. Leading the Nexus wave at IIUC.",
     email: "immahadihasanfahim@gmail.com",
@@ -33,6 +36,7 @@ const allAmbassadors: Ambassador[] = [
   },
   {
     name: "Aksa Arshad",
+    nexusId: "NXS-M2P7",
     institute: "Al hidaayah International school",
     bio: "Community lead and tech enthusiast. Bringing creative minds together at Al hidaayah International school.",
     email: "aksaarshad45@gmail.com",
@@ -96,7 +100,12 @@ export const AmbassadorsPage: React.FC<AmbassadorsPageProps> = ({ isOpen, onClos
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-nexus-navy via-nexus-navy/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 text-left">
                     <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                      <h4 className="text-xl font-bold text-white mb-1 group-hover:text-nexus-indigo transition-colors">{ambassador.name}</h4>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h4 className="text-xl font-bold text-white group-hover:text-nexus-indigo transition-colors">{ambassador.name}</h4>
+                        <span className="text-[9px] text-nexus-indigo font-mono bg-nexus-indigo/20 px-1.5 py-0.5 rounded border border-nexus-indigo/30">
+                          {ambassador.nexusId}
+                        </span>
+                      </div>
                       <p className="text-nexus-cyan font-mono text-[10px] mb-3 uppercase tracking-wider font-bold">{ambassador.institute}</p>
                       <p className="text-white/70 text-xs leading-relaxed mb-3">{ambassador.bio}</p>
                       {ambassador.email && (

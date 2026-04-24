@@ -28,8 +28,9 @@ import { HeroSkeleton } from './components/Skeleton';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { User } from './types';
 import { auth, db } from './lib/firebase';
+import { generateNexusId, getStableNexusId } from './lib/idGenerator';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, updateDoc, setDoc } from 'firebase/firestore';
 
 const CountUp: React.FC<{ end: number; duration?: number; suffix?: string }> = ({ end, duration = 2, suffix = '' }) => {
   const [count, setCount] = useState(0);
@@ -72,11 +73,40 @@ export default function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       if (fbUser) {
-        const userDoc = await getDoc(doc(db, 'users', fbUser.uid));
+        const userRef = doc(db, 'users', fbUser.uid);
+        const userDoc = await getDoc(userRef);
         const userData = userDoc.data();
+        
+        let nexusId = userData?.nexusId;
+        
+        // Ensure every user has a unique short Nexus ID
+        if (!nexusId) {
+          nexusId = generateNexusId();
+          // Check for collision (optional but good)
+          const membersSnapshot = await getDocs(collection(db, 'users'));
+          const existingIds = membersSnapshot.docs.map(d => d.data().nexusId);
+          while (existingIds.includes(nexusId)) {
+            nexusId = generateNexusId();
+          }
+
+          if (userDoc.exists()) {
+            await updateDoc(userRef, { nexusId });
+          } else {
+            // This case handles external providers on first login if setDoc hasn't run yet
+            await setDoc(userRef, {
+              fullName: fbUser.displayName || fbUser.email?.split('@')[0] || 'Nexus Member',
+              email: fbUser.email || '',
+              institute: 'Nexus Member',
+              gender: 'Other',
+              joinDate: new Date().toLocaleDateString(),
+              nexusId
+            });
+          }
+        }
         
         const user: User = {
           id: fbUser.uid,
+          nexusId: nexusId,
           fullName: userData?.fullName || fbUser.displayName || fbUser.email?.split('@')[0] || 'Nexus Member',
           email: fbUser.email || '',
           institute: userData?.institute || 'Nexus Member',
@@ -481,6 +511,7 @@ export default function App() {
               {[
                 {
                   name: "Ishrat Jahan Rupsha",
+                  nexusId: "NXS-A4R2",
                   institute: "BGC Trust University",
                   bio: "Passionate about tech and community building. Representing Nexus at BGC Trust University.",
                   email: "rupsha619@gmail.com",
@@ -488,6 +519,7 @@ export default function App() {
                 },
                 {
                   name: "MD. Mahadi Hasan Fahim",
+                  nexusId: "NXS-K9L5",
                   institute: "International Islamic University Chittagong",
                   bio: "Competitive programmer and tech enthusiast. Leading the Nexus wave at IIUC.",
                   email: "immahadihasanfahim@gmail.com",
@@ -495,6 +527,7 @@ export default function App() {
                 },
                 {
                   name: "Aksa Arshad",
+                  nexusId: "NXS-M2P7",
                   institute: "Al hidaayah International school",
                   bio: "Community lead and tech enthusiast. Bringing creative minds together at Al hidaayah International school.",
                   email: "aksaarshad45@gmail.com",
@@ -521,7 +554,12 @@ export default function App() {
                       whileHover={{ y: 0, opacity: 1 }}
                       className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500"
                     >
-                      <h4 className="text-lg font-bold text-white mb-0.5 group-hover:text-nexus-indigo transition-colors">{ambassador.name}</h4>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <h4 className="text-lg font-bold text-white group-hover:text-nexus-indigo transition-colors">{ambassador.name}</h4>
+                        <span className="text-[8px] text-nexus-indigo font-mono bg-nexus-indigo/20 px-1 py-0.5 rounded border border-nexus-indigo/30">
+                          {ambassador.nexusId}
+                        </span>
+                      </div>
                       <p className="text-nexus-cyan font-mono text-[10px] mb-2 uppercase tracking-wider font-bold">{ambassador.institute}</p>
                       <p className="text-white/70 text-[10px] leading-relaxed line-clamp-2 mb-2">{ambassador.bio}</p>
                       {'email' in ambassador && (
@@ -531,7 +569,12 @@ export default function App() {
                   </div>
                   {/* Default indicator */}
                   <div className="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/80 to-transparent group-hover:opacity-0 transition-opacity">
-                    <p className="text-white font-bold text-center text-xs">{ambassador.name}</p>
+                    <div className="flex items-center justify-center gap-2">
+                      <p className="text-white font-bold text-center text-xs">{ambassador.name}</p>
+                      <span className="text-[8px] text-nexus-indigo font-mono bg-nexus-indigo/20 px-1 py-0.5 rounded border border-nexus-indigo/30">
+                        {ambassador.nexusId}
+                      </span>
+                    </div>
                   </div>
                 </motion.div>
               ))}
@@ -560,12 +603,20 @@ export default function App() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {registeredMembers.length > 0 ? (
                 registeredMembers.map((member, i) => (
-                  <div key={i} className="glass p-6 rounded-2xl border-white/5 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-nexus-indigo/10 flex items-center justify-center text-nexus-indigo font-bold">
+                  <div key={i} className="glass p-6 rounded-2xl border-white/5 flex items-center gap-4 relative group overflow-hidden">
+                    <div className="absolute top-3 right-3 flex flex-col items-end gap-0.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                      <span className="text-[7px] font-bold text-nexus-indigo/60 uppercase tracking-tighter">Nexus ID</span>
+                      <span className="text-[9px] text-nexus-indigo font-mono bg-nexus-indigo/5 px-2 py-0.5 rounded-full border border-nexus-indigo/10">
+                        {member.nexusId || getStableNexusId(member.id)}
+                      </span>
+                    </div>
+                    <div className="w-12 h-12 rounded-full bg-nexus-indigo/10 flex items-center justify-center text-nexus-indigo font-bold shrink-0">
                       {member.fullName.charAt(0)}
                     </div>
-                    <div>
-                      <div className="font-bold text-sm">{member.fullName}</div>
+                    <div className="pr-12">
+                      <div className="font-bold text-sm text-ellipsis overflow-hidden whitespace-nowrap">
+                        {member.fullName}
+                      </div>
                       <div className="text-[10px] text-nexus-navy/40 dark:text-white/40">{member.institute}</div>
                       <div className="text-[10px] text-nexus-cyan mt-1">{member.email}</div>
                     </div>

@@ -1,5 +1,6 @@
 export interface User {
   id: string;
+  nexusId?: string;
   fullName: string;
   institute: string;
   gender: string;
