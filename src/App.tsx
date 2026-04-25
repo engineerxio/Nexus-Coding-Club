@@ -24,6 +24,7 @@ import { Navbar, Drawer } from './components/Navigation';
 import { AuthModal } from './components/AuthModal';
 import { Dashboard } from './components/Dashboard';
 import { AmbassadorsPage } from './components/AmbassadorsPage';
+import { MembersPage } from './components/MembersPage';
 import { HeroSkeleton } from './components/Skeleton';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { User } from './types';
@@ -60,6 +61,7 @@ export default function App() {
   const [currentUser, setCurrentUser] = useLocalStorage<User | null>('nexus_current_user', null);
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [isAmbassadorsPageOpen, setIsAmbassadorsPageOpen] = useState(false);
+  const [isMembersPageOpen, setIsMembersPageOpen] = useState(false);
   const [registeredMembers, setRegisteredMembers] = useState<User[]>([]);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
@@ -210,6 +212,13 @@ export default function App() {
         isDark={isDark}
       />
 
+      <MembersPage
+        isOpen={isMembersPageOpen}
+        onClose={() => setIsMembersPageOpen(false)}
+        members={registeredMembers}
+        isDark={isDark}
+      />
+
       <AuthModal 
         isOpen={isAuthModalOpen} 
         onClose={() => setIsAuthModalOpen(false)}
@@ -266,12 +275,12 @@ export default function App() {
                 >
                   Join the Club <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                 </button>
-                <a 
-                  href="#about"
+                <button 
+                  onClick={() => setIsAuthModalOpen(true)}
                   className="px-8 py-4 rounded-xl glass border-white/10 text-white font-bold hover:bg-white/5 transition-all transform hover:-translate-y-1"
                 >
-                  Explore More
-                </a>
+                  Login
+                </button>
               </div>
             </motion.div>
 
@@ -602,13 +611,14 @@ export default function App() {
             <h3 className="text-xl font-bold mb-12 text-center text-nexus-navy/40 dark:text-white/40 uppercase tracking-[0.3em]">Registered Members</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {registeredMembers.length > 0 ? (
-                registeredMembers.map((member, i) => (
+                registeredMembers.slice(0, 6).map((member, i) => (
                   <div key={i} className="glass p-6 rounded-2xl border-white/5 flex items-center gap-4 relative group overflow-hidden">
-                    <div className="absolute top-3 right-3 flex flex-col items-end gap-0.5 opacity-60 group-hover:opacity-100 transition-opacity">
-                      <span className="text-[7px] font-bold text-nexus-indigo/60 uppercase tracking-tighter">Nexus ID</span>
-                      <span className="text-[9px] text-nexus-indigo font-mono bg-nexus-indigo/5 px-2 py-0.5 rounded-full border border-nexus-indigo/10">
+                    <div className="absolute top-3 right-3 flex flex-col items-end gap-0.5 group-hover:opacity-100 transition-opacity">
+                      <span className="text-[7px] font-black text-nexus-indigo uppercase tracking-wider">MEMBER ID</span>
+                      <span className="text-[10px] font-bold text-nexus-indigo font-mono bg-nexus-indigo/10 px-2 py-0.5 rounded-full border border-nexus-indigo/20 shadow-[0_0_10px_rgba(99,102,241,0.2)]">
                         {member.nexusId || getStableNexusId(member.id)}
                       </span>
+                      <span className="text-[6px] text-nexus-navy/30 dark:text-white/20 font-mono mt-1 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">UID: {member.id}</span>
                     </div>
                     <div className="w-12 h-12 rounded-full bg-nexus-indigo/10 flex items-center justify-center text-nexus-indigo font-bold shrink-0">
                       {member.fullName.charAt(0)}
@@ -628,6 +638,18 @@ export default function App() {
                 </div>
               )}
             </div>
+
+            {registeredMembers.length > 6 && (
+              <div className="mt-12 flex flex-col items-center">
+                <button
+                  onClick={() => setIsMembersPageOpen(true)}
+                  className="group flex items-center gap-2 px-8 py-3 rounded-xl bg-nexus-indigo/10 text-nexus-indigo border border-nexus-indigo/30 hover:bg-nexus-indigo hover:text-white transition-all font-bold uppercase tracking-wider text-xs"
+                >
+                  See All Members
+                  <ArrowUpRight size={16} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </section>

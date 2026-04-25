@@ -37,6 +37,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
     e.preventDefault();
     setIsLoading(true);
     try {
+      // Very permissive email check: just needs @ and a dot
+      const emailRegex = /.+@.+\..+/;
+      if (!emailRegex.test(formData.email)) {
+        throw new Error('Please enter a valid email address (e.g., user@domain.com)');
+      }
+
       if (view === 'login') {
         const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
         const fbUser = userCredential.user;
@@ -294,7 +300,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLogin, 
                 <div className="relative">
                   <Mail className={`absolute left-3 top-1/2 -translate-y-1/2 ${isDark ? 'text-white/40' : 'text-nexus-navy/40'}`} size={18} />
                   <input
-                    type="email"
+                    type="text"
                     placeholder="Email Address"
                     required
                     className={`w-full border rounded-xl py-3 pl-10 pr-4 transition-colors focus:outline-none focus:border-nexus-indigo ${isDark ? 'bg-white/5 border-white/10 text-white placeholder:text-white/20' : 'bg-nexus-navy/5 border-nexus-navy/10 text-nexus-navy placeholder:text-nexus-navy/20'}`}
